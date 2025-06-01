@@ -1,2 +1,19 @@
 # analisador_sentencas
-Uso de IA Gen, pelo LiteLLM, para a análise massiva de sentenças judiciais
+
+Análise massiva de sentenças judiciais com IA Gen, via LiteLLM.
+
+---
+
+### Bibliotecas necessárias
+pip install pandas litellm python-dotenv beautifulsoup4 requests
+
+---
+
+### Uso
+1. Baixe as sentenças com download_sentences.py (selecione os parâmetros de pesquisa no código);
+1. Crie o dataframe de sentenças baixadas e salve em arquivo "csv" com create_csv.py;
+1. Recupere o dataframe e analise as sentenças, com call_api.py. O resultado estará disponível em novo arquivo "csv".
+1. Faça o merge dos dataframes criados nos itens anteriores para suas conclusões com merge_dfs.py.
+1. Gere um relatório formatado com generate_report.py.
+
+---
