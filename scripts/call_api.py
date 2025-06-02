@@ -1,30 +1,32 @@
 # -*- coding: utf-8 -*-
 # Script para analisar sentenças judiciais utilizando a API do modelo de linguagem LiteLLM
 
+import os
+import sys
 import pandas as pd
 from litellm import completion
 from dotenv import load_dotenv
 
+# Adiciona o diretório do projeto ao sys.path para importar configurações
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root) 
+
+from config.settings import PROCESSED_DATA_PATH, MODEL
+
+
 load_dotenv()
 
-path = 'data/processed/'
-df = pd.read_csv(f"{path}sentencas_tjsp.csv")
+path = PROCESSED_DATA_PATH
+df = pd.read_csv(f"{path}/sentencas_tjsp.csv")
 
-# PARA TESTE: Reduzimos o DataFrame para as primeiras 5 linhas
-df = df.sample(10) # Para teste, reduzimos o DataFrame para as primeiras 5 linhas
-
-# modelo = 'gpt-4o-mini'
-modelo = "deepseek/deepseek-chat"
-# modelo = "gemini/gemini-2.0-flash-lite"
-
-def analisar_sentenca_litellm(sentenca: str, modelo: str) -> dict:
+def analisar_sentenca_litellm(sentenca: str) -> dict:
     """
     Analisa uma sentença judicial utilizando a API do modelo de linguagem através do LiteLLM.
 
     Args:
         sentenca (str): O texto completo da sentença a ser analisada.
-        modelo (str): O nome do modelo a ser usado para a análise.
-    
+            
     Returns:
         dict: Um dicionário contendo as respostas para perguntas predefinidas.
               Em caso de erro em alguma pergunta, o valor correspondente será
@@ -84,7 +86,7 @@ def analisar_sentenca_litellm(sentenca: str, modelo: str) -> dict:
         resposta_api = None # Inicializa a variável de resposta
         try:
             response = completion(
-                model=modelo,
+                model=MODEL,
                 messages=[
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": prompt_usuario}
@@ -98,8 +100,8 @@ def analisar_sentenca_litellm(sentenca: str, modelo: str) -> dict:
 
         except Exception as e:
             # Captura outras exceções do LiteLLM ou erros gerais de processamento
-            resposta_api = f"Exceção geral com o modelo {modelo}."
-            print(f"Exceção geral na pergunta {i+1} com o modelo {modelo}: {e}")
+            resposta_api = f"Exceção geral com o modelo {MODEL}."
+            print(f"Exceção geral na pergunta {i+1} com o modelo {MODEL}: {e}")
 
         respostas_coletadas.append(resposta_api)
 
@@ -122,7 +124,7 @@ for index, row in df.iterrows():
     print(f"Analisando a sentença do processo nº {numero_do_processo}. Aguarde...") 
     
     try:
-        retorno_api = analisar_sentenca_litellm(texto_sentenca, modelo)
+        retorno_api = analisar_sentenca_litellm(texto_sentenca)
         retorno_api['numero_do_processo'] = numero_do_processo
         retorno_api['comarca'] = comarca
         retorno_api['foro'] = foro
@@ -163,7 +165,7 @@ colunas_ordenadas = [
 resultados_df = resultados_df[colunas_ordenadas]
 
 # Salva o DataFrame em um arquivo CSV
-resultados_df.to_csv(f"{path}analise_sentencas.csv", index=False)
+resultados_df.to_csv(f"{path}/analise_sentencas.csv", index=False)
 
 print("\nAnálise concluída. Resultados salvos em 'analise_sentencas_tjsp.csv'.")
 print(f"Total de sentenças processadas: {len(resultados_df)}")

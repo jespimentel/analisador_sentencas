@@ -1,26 +1,39 @@
+# -*- coding: utf-8 -*-
+
 import pandas as pd
 import datetime
+import os
+import sys
+
+# Adiciona o diretório do projeto ao sys.path para importar configurações
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root) 
+
+from config.settings import PROCESSED_DATA_PATH, MODEL
 
 # Define a data atual para o rodapé do relatório
-date_now = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
+date_now = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
 
-df = pd.read_csv(r'data\processed\analise_sentencas.csv')
+df = pd.read_csv(PROCESSED_DATA_PATH + '/analise_sentencas.csv')
 
-def gerar_relatorio_markdown(df: pd.DataFrame, nome_arquivo: str, modelo = "gemini/gemini-2.0-flash-lite") -> None:
+def gerar_relatorio_markdown(df: pd.DataFrame) -> None:
     """
     Gera um relatório formatado em Markdown a partir de um DataFrame.
 
     Args:
         df (pd.DataFrame): O DataFrame a ser analisado.
-        nome_arquivo (str): O nome do arquivo onde o relatório Markdown será salvo.
+        
     """
     if df.empty:
         print("O DataFrame está vazio. Nenhum relatório Markdown pode ser gerado.")
         return
+    
+    nome_arquivo = PROCESSED_DATA_PATH +'/relatorio_' + date_now + '.md'
 
     with open(nome_arquivo, "w", encoding="utf-8") as f:
         f.write("# Analisador de Sentenças\n\n") 
-        f.write(f"**Análise automatizada de Sentenças com a API do {modelo}.**\n\n")
+        f.write(f"**Análise automatizada de Sentenças com a API do {MODEL}.**\n\n")
         f.write(f"**Código-fonte:** https://github.com/jespimentel/analisador_sentencas\n\n") 
         f.write(f"**Data de geração:** {date_now}\n\n") 
         f.write("--- \n\n") 
@@ -45,4 +58,6 @@ def gerar_relatorio_markdown(df: pd.DataFrame, nome_arquivo: str, modelo = "gemi
 
     print(f"Relatório Markdown gerado com sucesso em '{nome_arquivo}'.")
 
-gerar_relatorio_markdown(df, r'data\processed\relatorio.md', 'deepseek/deepseek-chat')
+gerar_relatorio_markdown(df)
+
+# Fim do script

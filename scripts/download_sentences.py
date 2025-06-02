@@ -1,44 +1,27 @@
 # -*- coding: utf-8 -*-
 # Script para baixar sentenças judiciais do site do TJSP
-
 import requests
 import time
+import sys
+import os
 
-MAX_INTERACOES = 520
-path = 'data/raw/'
+# Adiciona o diretório do projeto ao sys.path para importar configurações
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root) 
 
-# -*- coding: utf-8 -*-
-# Primeiro Grau
+from config.settings import URL_TJSP, PARAMS_TJSP, PATH_SENTENCES, MAX_INTERACOES
+
+path = PATH_SENTENCES
+
 # Cria uma sessão persistente
 session = requests.Session()
 
 # 1a requisição para obter os cookies
-url_inicial = "https://esaj.tjsp.jus.br/cjpg/pesquisar.do"
+url_inicial = URL_TJSP
 
 # Dicionário de parâmetros da requisição
-params = {
-    "conversationId": "",
-    "dadosConsulta.pesquisaLivre": "tráfico",
-    "tipoNumero": "UNIFICADO",
-    "numeroDigitoAnoUnificado": "",
-    "foroNumeroUnificado": "",
-    "dadosConsulta.nuProcesso": "",
-    "dadosConsulta.nuProcessoAntigo": "",
-    "classeTreeSelection.values": "",
-    "classeTreeSelection.text": "",
-    "assuntoTreeSelection.values": "7961,3751,3370,3371,3372",
-    "assuntoTreeSelection.text": "5 Registros selecionados",
-    "agenteSelectedEntitiesList": "",
-    "contadoragente": "0",
-    "contadorMaioragente": "0",
-    "cdAgente": "",
-    "nmAgente": "",
-    "dadosConsulta.dtInicio": "",
-    "dadosConsulta.dtFim": "",
-    "varasTreeSelection.values": "",
-    "varasTreeSelection.text": "",
-    "dadosConsulta.ordenacao": "DESC"
-}
+params = PARAMS_TJSP
 
 response = session.get(url_inicial, params=params)
 
@@ -52,7 +35,7 @@ if response.status_code == 200:
 
         if response.status_code == 200:
             # Salva o conteúdo da página
-            with open(f"{path}pagina_{pagina}.html", "wb") as file:
+            with open(f"{path}/pagina_{pagina}.html", "wb") as file:
                 file.write(response.content)
             print(f"Página {pagina} salva com sucesso.")
         else:

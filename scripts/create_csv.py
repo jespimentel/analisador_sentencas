@@ -3,10 +3,19 @@
 
 import pandas as pd
 import os
+import sys
 from bs4 import BeautifulSoup
 
-# Diretório contendo os arquivos HTML
-directory = 'data/raw/'
+# Adiciona o diretório do projeto ao sys.path para importar configurações
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root) 
+
+from config.settings import PATH_SENTENCES, CSV_SENTENCES
+
+# Diretório das sentenças (arquivos HTML)
+directory = PATH_SENTENCES
+arquivo_csv = CSV_SENTENCES
 
 data = []
 
@@ -74,7 +83,7 @@ print(f"Total de sentenças extraídas: {len(df)}")
 
 # Salvando o DataFrame em um arquivo CSV
 output_path = 'data/processed/sentencas_tjsp.csv'
-df.to_csv(output_path, index=False, encoding='utf-8-sig')  # Usando utf-8-sig para compatibilidade com Excel
-print(f"Arquivo CSV salvo em: {output_path}")
+df.to_csv(arquivo_csv, index=False, encoding='utf-8-sig')  # Usando utf-8-sig para compatibilidade com Excel
+print(f"Arquivo CSV salvo em: {arquivo_csv}")
 
 # Fim do script
