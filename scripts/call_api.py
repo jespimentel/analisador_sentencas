@@ -42,8 +42,8 @@ def analisar_sentenca_litellm(sentenca: str) -> dict:
         # Pergunta 3: Especifica a relação com o tráfico?
         "Resuma, se for o caso, a relação do réu ou réus com o tráfico de drogas em até 50 palavras.",
         # Pergunta 4: Tipo de decisão
-        "A decisão foi de pronúncia, impronúncia, absolvição, desclassificaçã, extinção da punibilidade, condenatória ou outras? Responda com apenas uma palavra:\
-             pronúncia, impronúncia, absolvição, desclassificaçã, extinção da punibilidade, condenatória, outras. Havendo mais de um réu, responda, por exemplo: \
+        "A decisão foi de pronúncia, impronúncia, absolvição, desclassificação, extinção da punibilidade, condenatória ou outras? Responda com apenas uma palavra:\
+             pronúncia, impronúncia, absolvição, desclassificação, extinção da punibilidade, condenatória, outras. Havendo mais de um réu, responda, por exemplo: \
              pronúncia; absolvição; impronúncia (para múltiplos réus).",
         # Pergunta 5: Resumo da sentença
         "Resuma a sentença em até 50 palavras, focando nos principais pontos e decisões. Não inclua detalhes excessivos ou explicações adicionais.",
